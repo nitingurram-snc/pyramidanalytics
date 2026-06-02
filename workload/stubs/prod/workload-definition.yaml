@@ -1,0 +1,24 @@
+heimdall:
+  workload:
+    id: replace-with-prod-workload-id
+    repo:
+      url: https://gitlab.servicenow.net/snowsk8s/apps/pyramidanalytics.git
+      ref: release/sncprod-ca0
+      path: workload
+    services:
+      pyramid-web:
+        id: replace-with-prod-service-instance-id
+        dns:
+          - pyramid-web
+    config:
+      database:
+        endpoint: replace-with-managed-db-fqdn
+      storage:
+        s3Endpoint: replace-with-prod-object-storage-endpoint
+      dcps:
+        url: https://snccredential.service-now.com
+        apiKeyRemoteRef: pyramid-dcps-apikey
+        dbRemoteRef: pyramid-prod-db-credentials
+        adminRemoteRef: pyramid-prod-admin-credentials
+        licenseRemoteRef: pyramid-prod-license
+        s3RemoteRef: pyramid-prod-s3-credentials

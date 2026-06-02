@@ -1,0 +1,12 @@
+heimdall:
+  workload:
+    id: local-pyramidanalytics
+    services:
+      pyramid-web:
+        id: local-pyramid-web
+    storage:
+      postgresql:
+        id: ""
+    config:
+      storage:
+        s3Endpoint: ""

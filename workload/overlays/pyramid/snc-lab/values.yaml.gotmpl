@@ -1,0 +1,49 @@
+repo: docker-local.artifactory.servicenow.net/gitlab.servicenow.net/snowsk8s/apps/pyramidanalytics/pyramidanalytics
+imagePullPolicy: IfNotPresent
+
+service:
+  type: LoadBalancer
+  annotations:
+    ccm.snowsk8s.servicenow.net/lb-service-id: {{ .Values | get "heimdall.workload.services.pyramid-web.id" "unknown" }}
+    ccm.snowsk8s.servicenow.net/lb-service-ip-space: private
+    ccm.snowsk8s.servicenow.net/lb-healthcheck-type: http
+    ccm.snowsk8s.servicenow.net/lb-healthcheck-http-schema: http
+    ccm.snowsk8s.servicenow.net/lb-healthcheck-port: "8181"
+    ccm.snowsk8s.servicenow.net/lb-healthcheck-http-path: /
+    ccm.snowsk8s.servicenow.net/lb-healthcheck-http-status-code-regex: "^2[0-9]{2}$"
+
+prometheus:
+  enabled: false
+
+storage:
+  type: other
+
+unattended:
+  enabled: false
+  createSecret: false
+  installationData:
+    storageType: AWSS3
+    serverType: Postgresql
+    serverAddress: postgresql
+    port: 5432
+    database: pyramid
+    dbUser: pyramid
+
+ws:
+  kedaAutoscaling:
+    enabled: false
+te:
+  kedaAutoscaling:
+    enabled: false
+rte:
+  autoscaling:
+    enabled: false
+ai:
+  autoscaling:
+    enabled: false
+nlp:
+  autoscaling:
+    enabled: false
+solve:
+  autoscaling:
+    enabled: false

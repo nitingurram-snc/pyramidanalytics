@@ -1,0 +1,1 @@
+# Production must use a managed database. The postgresql release is disabled in prod.

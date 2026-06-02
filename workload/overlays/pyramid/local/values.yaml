@@ -1,0 +1,95 @@
+service:
+  type: ClusterIP
+  annotations: {}
+
+prometheus:
+  enabled: false
+
+storage:
+  type: other
+
+unattended:
+  enabled: false
+  createSecret: false
+
+ws:
+  requests:
+    memory: "512Mi"
+    cpu: "250m"
+    ephemeral_storage: "512Mi"
+  limits:
+    memory: "1500Mi"
+    cpu: "1000m"
+    ephemeral_storage: "2Gi"
+  kedaAutoscaling:
+    enabled: false
+
+rtr:
+  requests:
+    memory: "256Mi"
+    cpu: "100m"
+  limits:
+    memory: "750Mi"
+    cpu: "500m"
+
+rte:
+  requests:
+    memory: "768Mi"
+    cpu: "250m"
+  limits:
+    memory: "2Gi"
+    cpu: "1000m"
+  autoscaling:
+    enabled: false
+
+nlp:
+  requests:
+    memory: "768Mi"
+    cpu: "250m"
+  limits:
+    memory: "2Gi"
+    cpu: "1000m"
+  autoscaling:
+    enabled: false
+
+solve:
+  requests:
+    memory: "768Mi"
+    cpu: "250m"
+  limits:
+    memory: "2Gi"
+    cpu: "1000m"
+  autoscaling:
+    enabled: false
+
+te:
+  requests:
+    memory: "768Mi"
+    cpu: "250m"
+    ephemeral_storage: "512Mi"
+  limits:
+    memory: "2Gi"
+    cpu: "1000m"
+    ephemeral_storage: "2Gi"
+  kedaAutoscaling:
+    enabled: false
+
+ai:
+  requests:
+    memory: "768Mi"
+    cpu: "250m"
+    ephemeral_storage: "512Mi"
+  limits:
+    memory: "2Gi"
+    cpu: "1000m"
+    ephemeral_storage: "2Gi"
+  autoscaling:
+    enabled: false
+
+gis:
+  requests:
+    memory: "256Mi"
+    cpu: "100m"
+  limits:
+    memory: "750Mi"
+    cpu: "500m"

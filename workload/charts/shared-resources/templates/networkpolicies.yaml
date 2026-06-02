@@ -1,0 +1,142 @@
+{{- if .Values.networkPolicies.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-all
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress: []
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-pyramid-intra-workload
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Values.networkPolicies.pyramidReleaseName }}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/instance: {{ .Values.networkPolicies.pyramidReleaseName }}
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/instance: {{ .Values.networkPolicies.pyramidReleaseName }}
+{{- if .Values.networkPolicies.postgresReleaseName }}
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: postgresql
+              app.kubernetes.io/instance: {{ .Values.networkPolicies.postgresReleaseName }}
+      ports:
+        - port: {{ .Values.networkPolicies.postgresPort | int }}
+          protocol: TCP
+{{- end }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-radium-metrics-in
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ .Values.networkPolicies.webAppLabel }}
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: radium
+          podSelector:
+            matchLabels:
+              metrics-scraper: "true"
+      ports:
+        - port: {{ .Values.networkPolicies.metricsPort | int }}
+          protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-adcv2-pyramid-web
+spec:
+  endpointSelector:
+    matchLabels:
+      app: {{ .Values.networkPolicies.webAppLabel }}
+  ingress:
+    - fromCIDRSet:
+        - cidrGroupRef: adc
+      toPorts:
+        - ports:
+            - port: {{ .Values.networkPolicies.webPort | quote }}
+              protocol: TCP
+{{- if .Values.networkPolicies.managedDbEndpoint }}
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-pyramid-managed-db-egress
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Values.networkPolicies.pyramidReleaseName }}
+  egress:
+    - toFQDNs:
+        - matchName: {{ .Values.networkPolicies.managedDbEndpoint }}
+      toPorts:
+        - ports:
+            - port: {{ .Values.networkPolicies.postgresPort | quote }}
+              protocol: TCP
+{{- end }}
+{{- if .Values.networkPolicies.s3Endpoint }}
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-pyramid-s3-egress
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Values.networkPolicies.pyramidReleaseName }}
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toFQDNs:
+        - matchName: {{ .Values.networkPolicies.s3Endpoint }}
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+{{- end }}
+{{- end }}

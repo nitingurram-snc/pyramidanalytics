@@ -1,0 +1,5 @@
+networkPolicies:
+  enabled: false
+
+dcps:
+  enabled: false

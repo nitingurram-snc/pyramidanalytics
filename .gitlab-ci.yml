@@ -1,0 +1,73 @@
+spec:
+  inputs:
+    sync_images:
+      type: boolean
+      default: false
+      description: "Run Heimdall CI image sync to Artifactory"
+
+---
+
+stages:
+  - generate
+
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: never
+    - when: always
+
+variables:
+  CI_REGISTRY: docker-local.artifactory.servicenow.net
+  CI_REGISTRY_USER: svc-snowsk8s_apps_pyramidanalytics
+  CI_REGISTRY_PASSWORD: $KEEPER_TOKEN
+  ARTIFACTORY_DOCKER_REGISTRY: docker-local.artifactory.servicenow.net
+  ARTIFACTORY_REPO_PATH: gitlab.servicenow.net/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}
+  DOCKER_REGISTRY: docker-remote.artifactory.servicenow.net
+  GITLAB_REGISTRY: docker-gitlab-remote.artifactory.servicenow.net
+  HEIMDALL_CLIENT_DEV_IMAGE: ${ARTIFACTORY_DOCKER_REGISTRY}/gitlab.servicenow.net/snowsk8s/core/heimdall/client-dev:stable
+  SYNC_IMAGES: $[[ inputs.sync_images ]]
+
+heimdall-ci-generator:
+  stage: generate
+  image:
+    name: $HEIMDALL_CLIENT_DEV_IMAGE
+    pull_policy: always
+  rules:
+    - if: '$SYNC_IMAGES'
+      when: on_success
+    - when: never
+  script:
+    - |
+      heimdall ci \
+        --with-tokenkeeper-token-refresh-job \
+        --heimdall-image $HEIMDALL_CLIENT_DEV_IMAGE \
+        --docker-registry $DOCKER_REGISTRY \
+        --gitlab-registry $GITLAB_REGISTRY \
+        --extra-env-var DOCKER_HOST=tcp://docker:2375/ \
+        --extra-env-var DOCKER_TLS_VERIFY="" \
+        --extra-env-var DOCKER_CERT_PATH="" \
+        --extra-env-var DOCKER_TLS_CERTDIR="" \
+        --extra-env-var CI_REGISTRY=docker-local.artifactory.servicenow.net \
+        --extra-env-var CI_REGISTRY_USER=$CI_REGISTRY_USER \
+        --extra-env-var CI_REGISTRY_PASSWORD='$KEEPER_TOKEN' \
+        --extra-env-var CI_REGISTRY_IMAGE=$ARTIFACTORY_DOCKER_REGISTRY/$ARTIFACTORY_REPO_PATH \
+        --docker-runner-tag sk8s_runner_docker > pipeline.yml
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - pipeline.yml
+
+heimdall-ci-tasks:
+  stage: generate
+  rules:
+    - if: '$SYNC_IMAGES'
+      when: on_success
+    - when: never
+  needs:
+    - job: heimdall-ci-generator
+      artifacts: true
+  trigger:
+    include:
+      - artifact: pipeline.yml
+        job: heimdall-ci-generator
+    strategy: depend

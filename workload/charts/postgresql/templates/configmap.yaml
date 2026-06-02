@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "postgresql.fullname" . }}-init
+  labels:
+    {{- include "postgresql.labels" . | nindent 4 }}
+data:
+  init-databases.sql: |
+    -- Lab-only Pyramid prototype database. Production must use a managed DB.
+    CREATE DATABASE {{ .Values.auth.app.database }};
+    CREATE USER {{ .Values.auth.app.user }} WITH ENCRYPTED PASSWORD '{{ .Values.auth.app.password }}';
+    GRANT ALL PRIVILEGES ON DATABASE {{ .Values.auth.app.database }} TO {{ .Values.auth.app.user }};
+    \connect {{ .Values.auth.app.database }}
+    GRANT ALL ON SCHEMA public TO {{ .Values.auth.app.user }};

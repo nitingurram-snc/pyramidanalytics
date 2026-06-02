@@ -1,0 +1,8 @@
+storage:
+  s3Endpoint: ""
+dcps:
+  apiKeyRemoteRef: pyramid-dcps-apikey
+  dbRemoteRef: pyramid-db-credentials
+  adminRemoteRef: pyramid-admin-credentials
+  licenseRemoteRef: pyramid-license
+  s3RemoteRef: pyramid-s3-credentials

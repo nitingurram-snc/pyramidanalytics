@@ -1,0 +1,29 @@
+networkPolicies:
+  enabled: false
+  pyramidReleaseName: pyramid
+  webAppLabel: paws
+  webPort: "8181"
+  metricsPort: "9090"
+  postgresReleaseName: postgresql
+  postgresPort: "5432"
+  managedDbEndpoint: ""
+  s3Endpoint: ""
+
+dcps:
+  enabled: false
+  url: "https://snccredentiallab.service-now.com"
+  apiKeySecretName: pyramid-dcps-apikey
+  apiKeyRemoteRef: pyramid-dcps-apikey
+  secretStoreName: pyramid-dcps
+  credentials:
+    - name: pyramid-db-credentials
+      remoteRefKey: pyramid-db-credentials
+    - name: pyramid-admin-credentials
+      remoteRefKey: pyramid-admin-credentials
+    - name: pyramid-license
+      remoteRefKey: pyramid-license
+    - name: pyramid-s3-credentials
+      remoteRefKey: pyramid-s3-credentials
+
+unattendedExternalSecret:
+  enabled: false

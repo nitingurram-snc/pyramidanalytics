@@ -1,0 +1,24 @@
+heimdall:
+  workload:
+    id: replace-with-lab-workload-id
+    repo:
+      url: https://gitlab.servicenow.net/snowsk8s/apps/pyramidanalytics.git
+      ref: main
+      path: workload
+    services:
+      pyramid-web:
+        id: replace-with-lab-service-instance-id
+        dns:
+          - pyramid-web
+    storage:
+      postgresql:
+        id: replace-with-lab-postgresql-storage-instance-id
+    config:
+      storage:
+        s3Endpoint: replace-with-lab-oaas-endpoint
+      dcps:
+        apiKeyRemoteRef: pyramid-dcps-apikey
+        dbRemoteRef: pyramid-db-credentials
+        adminRemoteRef: pyramid-admin-credentials
+        licenseRemoteRef: pyramid-license
+        s3RemoteRef: pyramid-s3-credentials

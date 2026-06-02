@@ -1,0 +1,76 @@
+version: v4
+name: pyramidanalytics
+
+transitionPolicy:
+  apply:
+    diff:
+      required: false
+
+common_namespace: &ns snowsk8s-pyramid
+
+releasesDefault: {}
+
+environments:
+  local:
+    overlays:
+      - local
+
+  snc-lab:
+    overlays:
+      - snc-lab
+      - cmdb
+
+  prod:
+    overlays:
+      - prod
+      - cmdb
+    releases:
+      postgresql:
+        enabled: false
+      pyramid:
+        after:
+          - shared-resources
+
+  ci:
+    overlays:
+      - local
+      - ci
+
+releases:
+  shared-resources:
+    chart: charts/shared-resources
+    release: shared-resources
+    configKey: shared-resources
+    namespace:
+      name: *ns
+
+  postgresql:
+    chart: charts/postgresql
+    release: postgresql
+    configKey: postgresql
+    namespace:
+      name: *ns
+    after:
+      - shared-resources
+
+  pyramid:
+    chart: charts/pyramid
+    release: pyramid
+    configKey: pyramid
+    namespace:
+      name: *ns
+    after:
+      - shared-resources
+      - postgresql
+
+local:
+  cpus: 8
+  memory: 16384
+  diskSize: 100
+
+ci:
+  sync_images:
+    - id: snc-from-ci
+      environment: ci
+      skipRegistries:
+        - artifactory.servicenow.net

@@ -1,0 +1,5 @@
+{{- $storageID := .Values | get "heimdall.workload.storage.postgresql.id" "" }}
+{{- if $storageID }}
+storage:
+  instanceId: {{ $storageID }}
+{{- end }}

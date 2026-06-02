@@ -1,0 +1,11 @@
+storage:
+  s3Endpoint: ""
+database:
+  endpoint: ""
+dcps:
+  url: https://snccredential.service-now.com
+  apiKeyRemoteRef: pyramid-dcps-apikey
+  dbRemoteRef: pyramid-prod-db-credentials
+  adminRemoteRef: pyramid-prod-admin-credentials
+  licenseRemoteRef: pyramid-prod-license
+  s3RemoteRef: pyramid-prod-s3-credentials

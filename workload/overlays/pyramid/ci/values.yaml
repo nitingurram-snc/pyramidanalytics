@@ -1,0 +1,9 @@
+prometheus:
+  enabled: false
+
+storage:
+  type: other
+
+unattended:
+  enabled: false
+  createSecret: false

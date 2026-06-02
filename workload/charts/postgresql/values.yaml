@@ -1,0 +1,42 @@
+nameOverride: ""
+fullnameOverride: ""
+
+replicaCount: 1
+
+image:
+  repository: postgres
+  tag: "17"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 5432
+  nodePort: null
+
+storage:
+  size: 1Gi
+  className: standard
+  instanceId: ""
+
+auth:
+  adminPassword: postgres
+  app:
+    database: pyramid
+    user: pyramid
+    password: pyramid
+
+externalSecret:
+  enabled: false
+  secretStoreName: pyramid-dcps
+  remoteRefKey: pyramid-lab-postgresql-credentials
+
+podSecurityContext: {}
+containerSecurityContext: {}
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

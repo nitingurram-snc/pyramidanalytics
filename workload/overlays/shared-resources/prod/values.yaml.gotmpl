@@ -1,0 +1,26 @@
+networkPolicies:
+  enabled: true
+  pyramidReleaseName: pyramid
+  webAppLabel: paws
+  webPort: "8181"
+  metricsPort: "9090"
+  postgresReleaseName: ""
+  postgresPort: "5432"
+  managedDbEndpoint: {{ .Values | get "heimdall.workload.config.database.endpoint" "" | quote }}
+  s3Endpoint: {{ .Values | get "heimdall.workload.config.storage.s3Endpoint" "" | quote }}
+
+dcps:
+  enabled: true
+  url: {{ .Values | get "heimdall.workload.config.dcps.url" "https://snccredential.service-now.com" | quote }}
+  apiKeySecretName: pyramid-dcps-apikey
+  apiKeyRemoteRef: {{ .Values | get "heimdall.workload.config.dcps.apiKeyRemoteRef" "pyramid-dcps-apikey" | quote }}
+  secretStoreName: pyramid-dcps
+  credentials:
+    - name: pyramid-db-credentials
+      remoteRefKey: {{ .Values | get "heimdall.workload.config.dcps.dbRemoteRef" "pyramid-prod-db-credentials" | quote }}
+    - name: pyramid-admin-credentials
+      remoteRefKey: {{ .Values | get "heimdall.workload.config.dcps.adminRemoteRef" "pyramid-prod-admin-credentials" | quote }}
+    - name: pyramid-license
+      remoteRefKey: {{ .Values | get "heimdall.workload.config.dcps.licenseRemoteRef" "pyramid-prod-license" | quote }}
+    - name: pyramid-s3-credentials
+      remoteRefKey: {{ .Values | get "heimdall.workload.config.dcps.s3RemoteRef" "pyramid-prod-s3-credentials" | quote }}

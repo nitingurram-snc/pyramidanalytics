@@ -1,0 +1,60 @@
+{{- if .Values.dcps.enabled }}
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: {{ .Values.dcps.apiKeySecretName }}
+spec:
+  refreshInterval: "300s"
+  secretStoreRef:
+    name: heimdall-dcps
+    kind: ClusterSecretStore
+  target:
+    name: {{ .Values.dcps.apiKeySecretName }}
+  data:
+    - secretKey: apikey
+      remoteRef:
+        key: {{ .Values.dcps.apiKeyRemoteRef }}
+---
+apiVersion: external-secrets.io/v1
+kind: SecretStore
+metadata:
+  name: {{ .Values.dcps.secretStoreName }}
+spec:
+  provider:
+    webhook:
+      url: {{ printf "%s/api/x_snc_shared_pass/v2/dcps/getSecret" .Values.dcps.url | quote }}
+      method: POST
+      headers:
+        Content-Type: application/json
+        X-Api-Key: {{ print "{{ .auth.apikey }}" | quote }}
+      body: |
+        { "cred_name": {{ print "{{ .remoteRef.key }}" | quote }} }
+      result:
+        jsonPath: "$.result"
+      secrets:
+        - name: auth
+          secretRef:
+            name: {{ .Values.dcps.apiKeySecretName }}
+---
+{{- range .Values.dcps.credentials }}
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: {{ .name }}
+spec:
+  refreshInterval: "300s"
+  secretStoreRef:
+    name: {{ $.Values.dcps.secretStoreName }}
+    kind: SecretStore
+  target:
+    name: {{ .name }}
+    template:
+      data:
+        result: {{ print "{{ .result | toString }}" | quote }}
+  data:
+    - secretKey: result
+      remoteRef:
+        key: {{ .remoteRefKey }}
+---
+{{- end }}
+{{- end }}
