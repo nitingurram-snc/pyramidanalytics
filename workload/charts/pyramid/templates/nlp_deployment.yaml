@@ -16,6 +16,7 @@ spec:
         {{- include "pyramidAnalytics.selectorLabels" . | nindent 8 }}
     spec:
       serviceAccountName: pa-service
+      automountServiceAccountToken: true
       containers:
         - name: panlp
           image: "{{ .Values.repo }}/nlp:{{ .Chart.AppVersion }}"

@@ -6,90 +6,110 @@ prometheus:
   enabled: false
 
 storage:
-  type: other
+  type: claim
+  size: 10Gi
+  claim:
+    name: pyramid-storage-pvc
+    className: standard
 
 unattended:
-  enabled: false
-  createSecret: false
+  enabled: true
+  createSecret: true
+  installationData:
+    installationType: "new"
+    dbLocation: 0
+    serverType: "Postgresql"
+    serverAddress: "postgresql"
+    port: 5432
+    createDB: "off"
+    database: "pyramid"
+    dbUser: "pyramid"
+    dbPass: "pyramid"
+    enforceDbSsl: "off"
+    fips: false
+    firstUser: "admin"
+    firstUserPass: "Pyramid123!"
+    storageType: "PersistentVolume"
+    license: ""
 
 ws:
   requests:
-    memory: "512Mi"
-    cpu: "250m"
-    ephemeral_storage: "512Mi"
-  limits:
-    memory: "1500Mi"
-    cpu: "1000m"
+    memory: "2000Mi"
+    cpu: "500m"
     ephemeral_storage: "2Gi"
+  limits:
+    memory: "2000Mi"
+    cpu: "2000m"
+    ephemeral_storage: "4Gi"
   kedaAutoscaling:
     enabled: false
 
 rtr:
   requests:
-    memory: "256Mi"
-    cpu: "100m"
+    memory: "1000Mi"
+    cpu: "250m"
   limits:
-    memory: "750Mi"
-    cpu: "500m"
+    memory: "1000Mi"
+    cpu: "1000m"
 
 rte:
   requests:
-    memory: "768Mi"
-    cpu: "250m"
+    memory: "4000Mi"
+    cpu: "500m"
   limits:
-    memory: "2Gi"
-    cpu: "1000m"
+    memory: "8000Mi"
+    cpu: "2000m"
   autoscaling:
     enabled: false
 
 nlp:
   requests:
-    memory: "768Mi"
-    cpu: "250m"
+    memory: "4000Mi"
+    cpu: "500m"
   limits:
-    memory: "2Gi"
-    cpu: "1000m"
+    memory: "8000Mi"
+    cpu: "2000m"
   autoscaling:
     enabled: false
 
 solve:
   requests:
-    memory: "768Mi"
-    cpu: "250m"
+    memory: "4000Mi"
+    cpu: "500m"
   limits:
-    memory: "2Gi"
-    cpu: "1000m"
+    memory: "8000Mi"
+    cpu: "2000m"
   autoscaling:
     enabled: false
 
 te:
   requests:
-    memory: "768Mi"
-    cpu: "250m"
-    ephemeral_storage: "512Mi"
+    memory: "4000Mi"
+    cpu: "500m"
+    ephemeral_storage: "3Gi"
   limits:
-    memory: "2Gi"
-    cpu: "1000m"
-    ephemeral_storage: "2Gi"
+    memory: "16000Mi"
+    cpu: "2000m"
+    ephemeral_storage: "10Gi"
   kedaAutoscaling:
     enabled: false
 
 ai:
   requests:
-    memory: "768Mi"
-    cpu: "250m"
-    ephemeral_storage: "512Mi"
+    memory: "4000Mi"
+    cpu: "500m"
+    ephemeral_storage: "3Gi"
   limits:
-    memory: "2Gi"
-    cpu: "1000m"
-    ephemeral_storage: "2Gi"
+    memory: "16000Mi"
+    cpu: "2000m"
+    ephemeral_storage: "5Gi"
   autoscaling:
     enabled: false
 
 gis:
   requests:
-    memory: "256Mi"
-    cpu: "100m"
+    memory: "500Mi"
+    cpu: "250m"
   limits:
-    memory: "750Mi"
-    cpu: "500m"
+    memory: "1500Mi"
+    cpu: "1000m"

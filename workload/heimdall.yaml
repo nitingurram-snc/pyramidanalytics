@@ -41,15 +41,13 @@ releases:
     chart: charts/shared-resources
     release: shared-resources
     configKey: shared-resources
-    namespace:
-      name: *ns
+    namespace: *ns
 
   postgresql:
     chart: charts/postgresql
     release: postgresql
     configKey: postgresql
-    namespace:
-      name: *ns
+    namespace: *ns
     after:
       - shared-resources
 
@@ -57,15 +55,14 @@ releases:
     chart: charts/pyramid
     release: pyramid
     configKey: pyramid
-    namespace:
-      name: *ns
+    namespace: *ns
     after:
       - shared-resources
       - postgresql
 
 local:
-  cpus: 8
-  memory: 16384
+  cpus: 16
+  memory: 24576
   diskSize: 100
 
 ci:
